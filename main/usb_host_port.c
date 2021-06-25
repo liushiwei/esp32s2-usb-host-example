@@ -95,7 +95,10 @@ static void port_event_task(void* p)
 }
 
 // ------------------------------------------------ Public Functions ---------------------------------------------------
-
+/**
+ *  @george 配置USB HOST
+ */
+ 
 /**
  * @brief Creates port and pipe event queues. Sets up the HCD, and initializes a port.
  */

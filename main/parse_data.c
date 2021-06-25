@@ -15,6 +15,12 @@
 #define USB_W_VALUE_DT_HID                  0x22
 #define USB_W_VALUE_DT_CS_INTERFACE         0x24
 
+#define ADB_CLASS 0xff
+#define ADB_SUBCLASS 0x42
+#define ADB_PROTOCOL 0x1
+
+#define USB_DT_ENDPOINT_SIZE		7
+
 static uint8_t itf = 0;
 
 static void create_pipe(usb_desc_ep_t* ep)
@@ -115,7 +121,14 @@ static void parse_device_descriptor(uint8_t* data_buffer, usb_transfer_status_t 
         printf("Device subclass: 0x%02x\n", desc->bDeviceSubClass);
         printf("Device protocol: 0x%02x\n", desc->bDeviceProtocol);
         printf("EP0 max packet size: %d\n", desc->bMaxPacketSize0);
-        printf("VID: 0x%04x\n", desc->idVendor);
+        if(desc->idVendor == 0x18d1){
+            printf("VID: 0x%04x Vendor=Google Inc.\n", desc->idVendor);
+        }
+        else
+        {
+            printf("VID: 0x%04x\n", desc->idVendor);
+        }
+        
         printf("PID: 0x%04x\n", desc->idProduct);
         printf("Revision number: %d.%02d\n", bcd_to_decimal(desc->bcdDevice >> 8), bcd_to_decimal(desc->bcdDevice & 0xff));
         printf("Manufacturer id: %d\n", desc->iManufacturer);

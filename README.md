@@ -1,3 +1,5 @@
+## 名词解释
+ IRP I/O请求数据包  (I/O request packets)
 ## Simple usb host example 
 Since usb host support is still alpha or beta stage and include file is in private_include i copied component to this example. 
 Code has been refactored to use events in client code. 

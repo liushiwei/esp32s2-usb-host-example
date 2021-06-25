@@ -146,6 +146,7 @@ typedef struct usb_irp_obj usb_irp_t;
 #define USB_CTRL_REQ_SIZE       8
 
 /**
+ * @george USB 控制传输封装
  * @brief Structure representing a USB control transfer setup packet
  */
 typedef union {
@@ -218,6 +219,7 @@ _Static_assert(sizeof(usb_ctrl_req_t) == USB_CTRL_REQ_SIZE, "Size of usb_ctrl_re
 
 /**
  * @brief Initializer for a request to get a device's device descriptor
+ * @george 获取设备描述符
  */
 #define USB_CTRL_REQ_INIT_GET_DEVC_DESC(ctrl_req_ptr) ({ \
     (ctrl_req_ptr)->bRequestType = USB_B_REQUEST_TYPE_DIR_IN | USB_B_REQUEST_TYPE_TYPE_STANDARD | USB_B_REQUEST_TYPE_RECIP_DEVICE;   \
@@ -243,6 +245,7 @@ _Static_assert(sizeof(usb_ctrl_req_t) == USB_CTRL_REQ_SIZE, "Size of usb_ctrl_re
  *
  * - desc_index indicates the configuration's index number
  * - Number of bytes of the configuration descriptor to get
+ * @george 获取配置描述符
  */
 #define USB_CTRL_REQ_INIT_GET_CFG_DESC(ctrl_req_ptr, desc_index, desc_len) ({  \
     (ctrl_req_ptr)->bRequestType = USB_B_REQUEST_TYPE_DIR_IN | USB_B_REQUEST_TYPE_TYPE_STANDARD | USB_B_REQUEST_TYPE_RECIP_DEVICE;   \
