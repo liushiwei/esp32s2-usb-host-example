@@ -20,6 +20,7 @@
 #include "esp_log.h"
 #include "ctrl_pipe.h"
 #include "usb_host_port.h"
+#include "adb_driver.h"
 
 // #define USE_ALTERNATIVE_CALLBACKS
 
@@ -127,6 +128,44 @@ void usbh_port_connection_cb(port_event_msg_t msg)
     }
 }
 
+
+static void adb_pipe_cb(pipe_event_msg_t msg, usb_irp_t *irp, void *context)
+{
+    ESP_LOGD("", "\t-> Pipe [%d] event: %d\n", (uint8_t)context, msg.pipe_event);
+
+    switch (msg.pipe_event)
+    {
+        case HCD_PIPE_EVENT_NONE:
+            break;
+
+        case HCD_PIPE_EVENT_IRP_DONE:
+            ESP_LOGD("Pipe cdc: ", "XFER status: %d, num bytes: %d, actual bytes: %d", irp->status, irp->num_bytes, irp->actual_num_bytes);
+            // we are getting only IN data here
+            if(irp->data_buffer[0] == 0x3f)
+                xfer_out_data((uint8_t*)"test\n", 5);
+            else
+                ESP_LOGI("", "%.*s", irp->actual_num_bytes, irp->data_buffer);
+
+            ready = true;
+            break;
+
+        case HCD_PIPE_EVENT_ERROR_XFER:
+            ESP_LOGW("", "XFER error: %d", irp->status);
+            hcd_pipe_command(msg.pipe_hdl, HCD_PIPE_CMD_RESET);
+            break;
+        
+        case HCD_PIPE_EVENT_ERROR_STALL:
+            ESP_LOGW("", "Device stalled: %s pipe, state: %d", "BULK", hcd_pipe_get_state(msg.pipe_hdl));
+            hcd_pipe_command(msg.pipe_hdl, HCD_PIPE_CMD_RESET);
+            break;
+        
+        default:
+            ESP_LOGW("", "not handled pipe event: %d", msg.pipe_event);
+            break;
+    }
+}
+
+
 void usbh_port_disconnection_cb(port_event_msg_t msg) {}
 void usbh_port_error_cb(port_event_msg_t msg) {}
 void usbh_port_overcurrent_cb(port_event_msg_t msg) {}
@@ -163,6 +202,7 @@ void app_main(void)
     if (setup_usb_host())
     {
         xTaskCreate(ctrl_pipe_event_task, "pipe_task", 4 * 1024, NULL, 10, NULL);
+        register_adb_pipe_callback(adb_pipe_cb);
     }
 
     while (1)

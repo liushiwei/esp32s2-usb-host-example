@@ -11,6 +11,7 @@
 #include "hal/usbh_ll.h"
 #include "hcd.h"
 #include "esp_log.h"
+#include "adb_driver.h"
 
 #define USB_W_VALUE_DT_HID                  0x22
 #define USB_W_VALUE_DT_CS_INTERFACE         0x24
@@ -23,6 +24,8 @@
 
 static uint8_t itf = 0;
 
+static uint8_t is_adb_if = 0;  //检测到adb usb interface
+
 static void create_pipe(usb_desc_ep_t* ep)
 {
     switch (itf)
@@ -30,6 +33,13 @@ static void create_pipe(usb_desc_ep_t* ep)
         case 0x02:
         case 0x0A:
             // cdc_create_pipe(ep);
+            break;
+        case ADB_CLASS:
+            if(is_adb_if){
+                printf("\nCreate ADB PIPE:\n");    
+                adb_create_pipe(ep)
+            }
+            
             break;
         
         default:
@@ -188,6 +198,10 @@ void parse_cfg_descriptor(uint8_t* data_buffer, usb_transfer_status_t status, ui
                     printf("bInterfaceClass: 0x%02x (%s)\n", data->bInterfaceClass, class_to_str(data->bInterfaceClass));
                     printf("bInterfaceSubClass: 0x%02x\n", data->bInterfaceSubClass);
                     printf("bInterfaceProtocol: 0x%02x\n", data->bInterfaceProtocol);
+                    if(data->bInterfaceClass == ADB_CLASS && data->bInterfaceSubClass == ADB_SUBCLASS && data->bInterfaceProtocol == ADB_PROTOCOL){
+                        printf("******* GET ADB IF VVV -_- VVV********\n");
+                        is_adb_if = 1;
+                    }
                     break;
                 }
                 case USB_W_VALUE_DT_ENDPOINT:{
@@ -199,6 +213,7 @@ void parse_cfg_descriptor(uint8_t* data_buffer, usb_transfer_status_t status, ui
                     printf("bDescriptorType: %d\n", data->bDescriptorType);
                     printf("wMaxPacketSize: %d\n", data->wMaxPacketSize);
                     printf("bInterval: %d ms\n", data->bInterval);
+                    // @george 得到 端点 描述符后建立管道
                     create_pipe(data);
                     break;
                 }

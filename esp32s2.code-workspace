@@ -2,7 +2,20 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "../../code/adb/adb_9.0"
+		},
+		{
+			"path": "../usb_cdc"
+		},
+		{
+			"path": "../../code/adb/microbridge-arduino"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"adb_driver.h": "c"
+		}
+	}
 }

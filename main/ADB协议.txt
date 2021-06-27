@@ -1,0 +1,150 @@
+adb USB 节点 
+1个interface 2个ep ,1个out,1个in,bulk类型
+#define ADB_CLASS 0xff
+#define ADB_SUBCLASS 0x42
+#define ADB_PROTOCOL 0x1
+InterfaceProtocol == ADB_PROTOCOL
+
+
+I (647) : Creating new IRP, free memory: 245172
+W (647) : port handle: 0x0, 0x3ff9ffac
+I (647) DEVICE descriptor: 12 01 00 02 00 00 00 40 95 2d 11 60 14 04 01 02 
+I (657) DEVICE descriptor: 03 01 
+
+Device descriptor:
+Length: 18
+Descriptor type: 1
+USB version: 2.00
+Device class: 0x00 (>ifc)
+Device subclass: 0x00
+Device protocol: 0x00
+EP0 max packet size: 64
+VID: 0x2d95
+PID: 0x6011
+Revision number: 4.14
+Manufacturer id: 1
+Product id: 2
+Serial id: 3
+Configurations num: 1
+I (687) : port handle: 0x0
+I (697) : Creating new IRP, free memory: 244860
+I (697) : Dequeue and delete IRP, free memory: 245112
+I (707) ADDRESS: 1
+I (707) : Creating new IRP, free memory: 245112
+I (707) : Dequeue and delete IRP, free memory: 245112
+I (717) SET CONFIG: 0
+I (717) : Creating new IRP, free memory: 245112
+I (727) : Dequeue and delete IRP, free memory: 244860
+I (727) CONFIG descriptor: 09 02 37 00 02 01 04 c0 00 09 04 00 00 02 08 06 
+I (737) CONFIG descriptor: 50 05 07 05 81 02 40 00 00 07 05 01 02 40 00 00 
+I (747) CONFIG descriptor: 09 04 01 00 02 ff 42 01 07 07 05 02 02 40 00 00 
+I (757) CONFIG descriptor: 07 05 82 02 40 00 00 
+
+Config:
+Number of Interfaces: 2
+Attributes: 0xc0
+Max power: 0 mA
+
+Interface:
+bInterfaceNumber: 0
+bAlternateSetting: 0
+bNumEndpoints: 2
+bInterfaceClass: 0x08 (Mass Storage)
+bInterfaceSubClass: 0x06
+bInterfaceProtocol: 0x50
+
+Endpoint:
+bEndpointAddress: 0x81
+bmAttributes: 0x02
+bDescriptorType: 5
+wMaxPacketSize: 64
+bInterval: 0 ms
+
+Endpoint:
+bEndpointAddress: 0x01
+bmAttributes: 0x02
+bDescriptorType: 5
+wMaxPacketSize: 64
+bInterval: 0 ms
+
+Interface:
+bInterfaceNumber: 1
+bAlternateSetting: 0
+bNumEndpoints: 2
+bInterfaceClass: 0xff (Vendor specific)
+bInterfaceSubClass: 0x42
+bInterfaceProtocol: 0x01
+
+Endpoint:
+bEndpointAddress: 0x02
+bmAttributes: 0x02
+bDescriptorType: 5
+wMaxPacketSize: 64
+bInterval: 0 ms
+
+Endpoint:
+bEndpointAddress: 0x82
+bmAttributes: 0x02
+bDescriptorType: 5
+wMaxPacketSize: 64
+bInterval: 0 ms
+I (837) : Creating new IRP, free memory: 244860
+I (837) : Creating new IRP, free memory: 244800
+I (847) : Creating new IRP, free memory: 244488
+E (847) : Get string: 2, err: 259
+I (857) : Creating new IRP, free memory: 244176
+E (857) : Get string: 3, err: 259
+I (867) : Dequeue and delete IRP, free memory: 244176
+I (867) GET CONFIG: 136
+I (867) : Dequeue and delete IRP, free memory: 244236
+W (877) STALLED: 80 06 01 03 00 00 00 01 
+W (877) : Device stalled: CTRL pipe, state: 1
+I (887) Ctrl data: 80 06 01 03 00 00 00 01 
+I (887) : Dequeue and delete IRP, free memory: 244548
+I (2337) : Creating new IRP, free memory: 244548
+W (2337) STALLED: 80 06 01 03 00 00 00 01 
+W (2337) : Device stalled: CTRL pipe, state: 1
+I (2337) Ctrl data: 80 06 01 03 00 00 00 01 
+I (2337) : Dequeue and delete IRP, free memory: 244548
+I (4337) : Creating new IRP, free memory: 244548
+W (4337) STALLED: 80 06 01 03 00 00 00 01 
+W (4337) : Device stalled: CTRL pipe, state: 1
+I (4337) Ctrl data: 80 06 01 03 00 00 00 01 
+I (4337) : Dequeue and delete IRP, free memory: 244548
+I (6337) : Creating new IRP, free memory: 244548
+W (6337) STALLED: 80 06 01 03 00 00 00 01 
+W (6337) : Device stalled: CTRL pipe, state: 1
+I (6337) Ctrl data: 80 06 01 03 00 00 00 01 
+I (6337) : Dequeue and delete IRP, free memory: 244548
+I (8337) : Creating new IRP, free memory: 244548
+W (8337) STALLED: 80 06 01 03 00 00 00 01 
+W (8337) : Device stalled: CTRL pipe, state: 1
+I (8337) Ctrl data: 80 06 01 03 00 00 00 01 
+I (8337) : Dequeue and delete IRP, free memory: 244548
+I (10337) : Creating new IRP, free memory: 244548
+W (10337) STALLED: 80 06 01 03 00 00 00 01 
+W (10337) : Device stalled: CTRL pipe, state: 1
+I (10337) Ctrl data: 80 06 01 03 00 00 00 01 
+I (10337) : Dequeue and delete IRP, free memory: 244548
+I (12337) : Creating new IRP, free memory: 244548
+W (12337) STALLED: 80 06 01 03 00 00 00 01 
+W (12337) : Device stalled: CTRL pipe, state: 1
+I (12337) Ctrl data: 80 06 01 03 00 00 00 01 
+I (12337) : Dequeue and delete IRP, free memory: 244548
+I (14337) : Creating new IRP, free memory: 244548
+W (14337) STALLED: 80 06 01 03 00 00 00 01 
+W (14337) : Device stalled: CTRL pipe, state: 1
+I (14337) Ctrl data: 80 06 01 03 00 00 00 01 
+I (14337) : Dequeue and delete IRP, free memory: 244548
+I (16337) : Creating new IRP, free memory: 244548
+W (16337) STALLED: 80 06 01 03 00 00 00 01 
+W (16337) : Device stalled: CTRL pipe, state: 1
+I (16337) Ctrl data: 80 06 01 03 00 00 00 01 
+I (16337) : Dequeue and delete IRP, free memory: 244548
+I (18337) : Creating new IRP, free memory: 244548
+W (18337) STALLED: 80 06 01 03 00 00 00 01 
+W (18337) : Device stalled: CTRL pipe, state: 1
+I (18337) Ctrl data: 80 06 01 03 00 00 00 01 
+I (18337) : Dequeue and delete IRP, free memory: 244548
+I (20337) : Creating new IRP, free memory: 244548
+W (20337) STALLED: 80 06 01 03 00 00 00 01 

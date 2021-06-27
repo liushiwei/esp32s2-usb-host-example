@@ -113,7 +113,11 @@ usb_irp_t *allocate_irp(hcd_port_handle_t port_hdl, size_t size)
 
     return _irp;
 }
-
+/**
+ * 
+ * @george 控制传输管道事件任务
+ * 
+ */ 
 void ctrl_pipe_event_task(void *p)
 {
     printf("start pipe event task\n");
@@ -206,6 +210,7 @@ void ctrl_pipe_event_task(void *p)
                 break;
 
             default:
+                // @george USB HOST 控制管道 特殊类 回调
                 usbh_ctrl_pipe_class_specific_cb(msg, irp);
                 break;
             }
