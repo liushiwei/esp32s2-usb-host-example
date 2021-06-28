@@ -127,6 +127,7 @@ void adb_create_pipe(usb_desc_ep_t* ep)
     if(adb_pipe_evt_queue == NULL)
         adb_pipe_evt_queue = xQueueCreate(10, sizeof(pipe_event_msg_t));
     if((USB_DESC_EP_GET_XFERTYPE(ep) == USB_BM_ATTRIBUTES_XFER_BULK) && USB_DESC_EP_GET_EP_DIR(ep)){
+        bMaxPacketSize0 = USB_DESC_EP_GET_MPS(ep);
         memcpy(&endpoints[EP1], ep, sizeof(usb_desc_ep_t));
         alloc_pipe_and_xfer_reqs_adb(port_hdl, adb_pipe_evt_queue, &adb_ep_pipe_hdl[EP1], &adb_data_buffers[EP1], &adb_ep_irps[EP1], 1, ep);
     } else if((USB_DESC_EP_GET_XFERTYPE(ep) == USB_BM_ATTRIBUTES_XFER_BULK) && (!USB_DESC_EP_GET_EP_DIR(ep))){
@@ -151,28 +152,28 @@ void delete_pipes()
 
 
 
-// ENDPOINTS
-void xfer_intr_data()
-{
-    adb_ep_irps[EP1]->num_bytes = 8;    //1 worst case MPS
-    adb_ep_irps[EP1]->data_buffer = adb_data_buffers[EP1];
-    adb_ep_irps[EP1]->num_iso_packets = 0;
-    adb_ep_irps[EP1]->num_bytes = 8;
+// // ENDPOINTS
+// void xfer_intr_data()
+// {
+//     adb_ep_irps[EP1]->num_bytes = 8;    //1 worst case MPS
+//     adb_ep_irps[EP1]->data_buffer = adb_data_buffers[EP1];
+//     adb_ep_irps[EP1]->num_iso_packets = 0;
+//     adb_ep_irps[EP1]->num_bytes = 8;
 
-    esp_err_t err;
-    if(ESP_OK == (err = hcd_irp_enqueue(adb_ep_pipe_hdl[EP1], adb_ep_irps[EP1]))) {
-        ESP_LOGI("", "INT ");
-    } else {
-        ESP_LOGE("", "INT err: 0x%02x", err);
-    }
-}
+//     esp_err_t err;
+//     if(ESP_OK == (err = hcd_irp_enqueue(adb_ep_pipe_hdl[EP1], adb_ep_irps[EP1]))) {
+//         ESP_LOGI("", "INT ");
+//     } else {
+//         ESP_LOGE("", "INT err: 0x%02x", err);
+//     }
+// }
 
 void xfer_in_data()
 {
     ESP_LOGD("", "EP: 0x%02x", USB_DESC_EP_GET_ADDRESS(&endpoints[EP1]));
     adb_ep_irps[EP1]->num_bytes = bMaxPacketSize0;    //1 worst case MPS
     adb_ep_irps[EP1]->num_iso_packets = 0;
-    adb_ep_irps[EP1]->num_bytes = 64;
+    // adb_ep_irps[EP1]->num_bytes = 64;
 
     esp_err_t err;
     if(ESP_OK != (err = hcd_irp_enqueue(adb_ep_pipe_hdl[EP1], adb_ep_irps[EP1]))) {
@@ -186,7 +187,7 @@ void xfer_out_data(uint8_t* data, size_t len)
     memcpy(adb_ep_irps[EP2]->data_buffer, data, len);
     adb_ep_irps[EP2]->num_bytes = bMaxPacketSize0;    //1 worst case MPS
     adb_ep_irps[EP2]->num_iso_packets = 0;
-    adb_ep_irps[EP2]->num_bytes = len;
+    // adb_ep_irps[EP2]->num_bytes = len;
 
     esp_err_t err;
     if(ESP_OK != (err = hcd_irp_enqueue(adb_ep_pipe_hdl[EP2], adb_ep_irps[EP2]))) {
