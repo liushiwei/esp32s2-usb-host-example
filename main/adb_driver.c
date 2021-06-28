@@ -126,10 +126,10 @@ void adb_create_pipe(usb_desc_ep_t* ep)
 {
     if(adb_pipe_evt_queue == NULL)
         adb_pipe_evt_queue = xQueueCreate(10, sizeof(pipe_event_msg_t));
-    if((USB_DESC_EP_GET_XFERTYPE(ep) == USB_XFER_TYPE_BULK) && USB_DESC_EP_GET_EP_DIR(ep)){
+    if((USB_DESC_EP_GET_XFERTYPE(ep) == USB_BM_ATTRIBUTES_XFER_BULK) && USB_DESC_EP_GET_EP_DIR(ep)){
         memcpy(&endpoints[EP1], ep, sizeof(usb_desc_ep_t));
         alloc_pipe_and_xfer_reqs_adb(port_hdl, adb_pipe_evt_queue, &adb_ep_pipe_hdl[EP1], &adb_data_buffers[EP1], &adb_ep_irps[EP1], 1, ep);
-    } else if((USB_DESC_EP_GET_XFERTYPE(ep) == USB_XFER_TYPE_BULK) && (!USB_DESC_EP_GET_EP_DIR(ep))){
+    } else if((USB_DESC_EP_GET_XFERTYPE(ep) == USB_BM_ATTRIBUTES_XFER_BULK) && (!USB_DESC_EP_GET_EP_DIR(ep))){
         memcpy(&endpoints[EP2], ep, sizeof(usb_desc_ep_t));
         alloc_pipe_and_xfer_reqs_adb(port_hdl, adb_pipe_evt_queue, &adb_ep_pipe_hdl[EP2], &adb_data_buffers[EP2], &adb_ep_irps[EP2], 1, ep);
     }

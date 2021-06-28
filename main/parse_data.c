@@ -37,7 +37,7 @@ static void create_pipe(usb_desc_ep_t* ep)
         case ADB_CLASS:
             if(is_adb_if){
                 printf("\nCreate ADB PIPE:\n");    
-                adb_create_pipe(ep)
+                adb_create_pipe(ep);
             }
             
             break;

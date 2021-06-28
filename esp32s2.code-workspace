@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "../../code/adb/microbridge-arduino"
+		},
+		{
+			"path": "../esp32-s2-usb-host-cdc"
 		}
 	],
 	"settings": {

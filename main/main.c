@@ -33,6 +33,8 @@ hcd_pipe_handle_t ctrl_pipe_hdl;
 
 uint8_t bMaxPacketSize0 = 64;
 uint8_t conf_num = 0;
+static bool ready = false;
+
 void parse_cfg_descriptor(uint8_t *data_buffer, usb_transfer_status_t status, uint8_t len, uint8_t *conf_num);
 
 static void utf16_to_utf8(char *in, char *out, uint8_t len)
@@ -60,6 +62,11 @@ void usbh_set_address_cb(uint16_t addr, void *context)
     if (ESP_OK != hcd_pipe_update_dev_addr(ctrl_pipe_hdl, DEVICE_ADDR))
         ESP_LOGE("", "failed to update device address");
     xfer_set_configuration(port_hdl, ctrl_pipe_hdl, 0);
+}
+void usbh_ctrl_pipe_class_specific_cb(pipe_event_msg_t msg, usb_irp_t *irp)
+{
+    adb_class_specific_ctrl_cb(irp);
+    ready = true;
 }
 
 void usbh_get_config_desc_cb(uint8_t *data_buffer, size_t num_bytes, void *context)
@@ -178,7 +185,7 @@ void usbh_port_sudden_disconn_cb(port_event_msg_t msg)
         ESP_LOGW("", "pipe state: %d", hcd_pipe_get_state(ctrl_pipe_hdl));
         free_pipe_and_irp_list(ctrl_pipe_hdl);
         ctrl_pipe_hdl = NULL;
-
+        ready = false;
         esp_err_t err;
         if (HCD_PORT_STATE_RECOVERY == (state = hcd_port_get_state(msg.port_hdl)))
         {
@@ -209,5 +216,9 @@ void app_main(void)
     {
         vTaskDelay(200);
         xfer_get_string(port_hdl, ctrl_pipe_hdl, 1);
+        if(ready){
+            ready = false;
+            xfer_in_data();
+        }
     }
 }
