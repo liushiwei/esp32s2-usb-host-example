@@ -21,6 +21,8 @@ extern hcd_pipe_handle_t ctrl_pipe_hdl;
 static QueueHandle_t adb_pipe_evt_queue;
 static ctrl_pipe_cb_t adb_pipe_cb;
 
+static _Bool connected;
+
 static bool adb_pipe_callback(hcd_pipe_handle_t pipe_hdl, hcd_pipe_event_t pipe_event, void *user_arg, bool in_isr)
 {
     QueueHandle_t pipe_evt_queue = (QueueHandle_t)user_arg;
@@ -40,7 +42,8 @@ static bool adb_pipe_callback(hcd_pipe_handle_t pipe_hdl, hcd_pipe_event_t pipe_
 
 void adb_pipe_event_task(void* p)
 {
-    printf("start pipe event task\n");
+    printf("start adb pipe event task\n");
+    connected = 0;
     pipe_event_msg_t msg;
     adb_pipe_evt_queue = xQueueCreate(10, sizeof(pipe_event_msg_t));
 
@@ -133,7 +136,9 @@ void adb_create_pipe(usb_desc_ep_t* ep)
     } else if((USB_DESC_EP_GET_XFERTYPE(ep) == USB_BM_ATTRIBUTES_XFER_BULK) && (!USB_DESC_EP_GET_EP_DIR(ep))){
         memcpy(&endpoints[EP2], ep, sizeof(usb_desc_ep_t));
         alloc_pipe_and_xfer_reqs_adb(port_hdl, adb_pipe_evt_queue, &adb_ep_pipe_hdl[EP2], &adb_data_buffers[EP2], &adb_ep_irps[EP2], 1, ep);
+       
     }
+    
 }
 
 void delete_pipes()
@@ -183,7 +188,7 @@ void xfer_in_data()
 
 void xfer_out_data(uint8_t* data, size_t len)
 {
-    ESP_LOGD("", "EP: 0x%02x", USB_DESC_EP_GET_ADDRESS(&endpoints[EP2]));
+    ESP_LOGI("", "EP: 0x%02x", USB_DESC_EP_GET_ADDRESS(&endpoints[EP2]));
     memcpy(adb_ep_irps[EP2]->data_buffer, data, len);
     adb_ep_irps[EP2]->num_bytes = bMaxPacketSize0;    //1 worst case MPS
     adb_ep_irps[EP2]->num_iso_packets = 0;
@@ -194,10 +199,35 @@ void xfer_out_data(uint8_t* data, size_t len)
         ESP_LOGW("", "BULK %s, dir: %d, err: 0x%x", "OUT", USB_DESC_EP_GET_EP_DIR(&endpoints[EP2]), err);
     }
 }
+void writeMessage( uint32_t command, uint32_t arg0, uint32_t arg1, uint32_t length, uint8_t * data){
+    adb_message message;
+	uint32_t count, sum = 0;
+	uint8_t * x;
+	uint8_t rcode;
+
+	// Calculate data checksum
+    count = length;
+    x = data;
+    while(count-- > 0) sum += *x++;
+
+	// Fill out the message record.
+	message.command = command;
+	message.arg0 = arg0;
+	message.arg1 = arg1;
+	message.data_length = length;
+	message.data_check = sum;
+	message.magic = command ^ 0xffffffff;
+    xfer_out_data((uint8_t*)&message,sizeof(adb_message));
+	xfer_out_data(data,length);
+ }
+
+void writeStringMessage( uint32_t command, uint32_t arg0, uint32_t arg1, char * str){
+    return writeMessage( command, arg0, arg1, strlen(str) + 1, (uint8_t*)str);
+}
 
 void adb_class_specific_ctrl_cb(usb_irp_t* irp)
 {
-    
+    printf("adb_class_specific_ctrl_cb\n");
 }
 
 void register_adb_pipe_callback(ctrl_pipe_cb_t cb)

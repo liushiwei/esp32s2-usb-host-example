@@ -30,6 +30,18 @@
 #define A_CLSE 0x45534c43
 #define A_WRTE 0x45545257
 
+// ADB protocol version.
+// Version revision:
+// 0x01000000: original
+// 0x01000001: skip checksum (Dec 2017)
+#define A_VERSION_MIN 0x01000000
+#define A_VERSION_SKIP_CHECKSUM 0x01000001
+#define A_VERSION 0x01000001
+
+// Used for help/version information.
+#define ADB_VERSION_MAJOR 1
+#define ADB_VERSION_MINOR 0
+
 // https://code.google.com/p/microbridge/issues/detail?id=21
 #define A_AUTH 0x48545541
 
@@ -118,3 +130,5 @@ void delete_pipes();
 void adb_create_pipe(usb_desc_ep_t* ep);
 void register_adb_pipe_callback(ctrl_pipe_cb_t cb);
 void adb_class_specific_ctrl_cb(usb_irp_t* irp);
+void writeStringMessage( uint32_t command, uint32_t arg0, uint32_t arg1, char * str);
+void adb_pipe_event_task(void* p);

@@ -30,7 +30,7 @@
 #include "driver/periph_ctrl.h"
 #include "usb.h"
 #include "hcd.h"
-
+#include "esp_log.h"
 // ----------------------------------------------------- Macros --------------------------------------------------------
 
 // --------------------- Constants -------------------------
@@ -2524,9 +2524,10 @@ esp_err_t hcd_irp_enqueue(hcd_pipe_handle_t pipe_hdl, usb_irp_t *irp)
     HCD_CHECK(irp->reserved_ptr == NULL
               && IRP_STATE_GET(irp->reserved_flags) == IRP_STATE_IDLE,
               ESP_ERR_INVALID_STATE);
+    ESP_LOGE("", "hcd_irp_enqueue 1");
     pipe_t *pipe = (pipe_t *)pipe_hdl;
-
-    HCD_ENTER_CRITICAL();
+    // HCD_ENTER_CRITICAL();
+    // printf("hcd_irp_enqueue 2\r\n");
     //Check that pipe and port are in the correct state to receive IRPs
     HCD_CHECK_FROM_CRIT(pipe->port->state == HCD_PORT_STATE_ENABLED         //The pipe's port must be in the correct state
                         && pipe->state == HCD_PIPE_STATE_ACTIVE             //The pipe must be in the correct state
@@ -2534,10 +2535,12 @@ esp_err_t hcd_irp_enqueue(hcd_pipe_handle_t pipe_hdl, usb_irp_t *irp)
                         ESP_ERR_INVALID_STATE);
     //Use the IRP's reserved_ptr to store the pipe's
     irp->reserved_ptr = (void *)pipe;
+    ESP_LOGE("", "hcd_irp_enqueue 2");
     //Add the IRP to the pipe's pending tailq
     IRP_STATE_SET(irp->reserved_flags, IRP_STATE_PENDING);
     TAILQ_INSERT_TAIL(&pipe->pending_irp_tailq, irp, tailq_entry);
     pipe->num_irp_pending++;
+    ESP_LOGE("", "hcd_irp_enqueue 3");
     //use the IRP's reserved_flags to store the IRP's current state
     if (_buffer_can_fill(pipe)) {
         _buffer_fill(pipe);
@@ -2553,7 +2556,9 @@ esp_err_t hcd_irp_enqueue(hcd_pipe_handle_t pipe_hdl, usb_irp_t *irp)
         pipe->port->num_pipes_queued++;
         pipe->cs_flags.is_active = 1;
     }
-    HCD_EXIT_CRITICAL();
+    ESP_LOGE("", "hcd_irp_enqueue 4");
+    // HCD_EXIT_CRITICAL();
+    // ESP_LOGE("", "hcd_irp_enqueue 5");
     return ESP_OK;
 }
 

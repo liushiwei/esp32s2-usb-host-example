@@ -103,10 +103,12 @@ void usbh_ctrl_pipe_error_cb(usb_ctrl_req_t *ctrl)
 {
     ESP_LOG_BUFFER_HEX_LEVEL("ERROR", ctrl, 8, ESP_LOG_WARN);
 }
-
+// extern static _Bool connected;
 void usbh_get_configuration_cb(uint8_t addr, void *context)
 {
     ESP_LOGI("GET CONFIG", "%d", addr);
+    printf("write A_CNXN\n");
+    writeStringMessage(A_CNXN, 0x01000000, 4096, (char*)"host::microbridge");
 }
 
 /*------------------------------- USBH EP0 CTRL PIPE CALLBACKS -------------------------------*/
@@ -157,7 +159,7 @@ static void adb_pipe_cb(pipe_event_msg_t msg, usb_irp_t *irp, void *context)
             break;
 
         case HCD_PIPE_EVENT_ERROR_XFER:
-            ESP_LOGW("", "XFER error: %d", irp->status);
+            ESP_LOGW("", "adb XFER error: %d", irp->status);
             hcd_pipe_command(msg.pipe_hdl, HCD_PIPE_CMD_RESET);
             break;
         
@@ -209,12 +211,15 @@ void app_main(void)
     if (setup_usb_host())
     {
         xTaskCreate(ctrl_pipe_event_task, "pipe_task", 4 * 1024, NULL, 10, NULL);
+        xTaskCreate(adb_pipe_event_task, "pipe_task", 4*1024, NULL, 10, NULL);
         register_adb_pipe_callback(adb_pipe_cb);
     }
 
     while (1)
     {
         vTaskDelay(200);
+        printf("write A_CNXN\n");
+        writeStringMessage(A_CNXN, 0x01000000, 4096, (char*)"host::microbridge");
         xfer_get_string(port_hdl, ctrl_pipe_hdl, 1);
         if(ready){
             ready = false;
